@@ -11,15 +11,13 @@ removeMults x = filter (\f -> f `rem` x /= 0)
 
 sieve :: (Integral a) => [a] -> [a]
 sieve [] = []
+sieve (l:ls) | l*l > last(ls) = l:ls
 sieve (l:ls) = let
   r = removeMults l ls
   in
     if null r
     then l : r
     else l : sieve r
-
-highEnd :: (Integral a) => a -> a
-highEnd x = ceiling . sqrt $ fromIntegral x
 
 sieveUntil :: (Integral a) => a -> [a]
 sieveUntil a = sieve [2..a]
@@ -32,6 +30,7 @@ primeFactors x = filter (\f -> x `rem` f == 0) primes
 largestPrimeFactor :: (Integral a) => (a -> a)
 largestPrimeFactor = last . primeFactors
 
+-- 600851475143
 main = do
   argv <- getArgs
   let
