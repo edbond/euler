@@ -10,9 +10,13 @@ module Main
 where
 
 import System
+import Data.List
 
 isPrime :: (Integral a) => a -> Bool
-isPrime x = all (\f -> x `rem` f /= 0) [2..x-1]
+isPrime x = let
+  c = ceiling . sqrt $ fromIntegral x
+  in
+    all (\f -> x `rem` f /= 0) [2..c]
 
 primesUntil :: (Integral a) => a -> [a]
 primesUntil a = filter isPrime [2..a]
@@ -21,12 +25,12 @@ primeFactors :: (Integral a) => a -> [a]
 primeFactors a =
   let
     s = ceiling . sqrt $ fromIntegral a
-    p = primesUntil s
+    p = reverse . primesUntil $ s
   in
     filter (\f -> a `rem` f == 0) p
 
 largestPrimeFactor :: (Integral a) => (a -> a)
-largestPrimeFactor = head . reverse . primeFactors
+largestPrimeFactor = head . primeFactors
 
 main = do
   argv <- getArgs
