@@ -9,15 +9,15 @@ import System
 removeMults :: (Integral a) => a -> [a] -> [a]
 removeMults x = filter (\f -> f `rem` x /= 0)
 
-sieve :: (Integral a) => [a] -> [a] -> [a]
-sieve x [] = x
---sieve e (b:bs) | b*b > last(bs) = e ++ bs
-sieve e (b:bs) = let
+sieve :: (Integral a) => a -> [a] -> [a] -> [a]
+sieve _ x [] = x
+sieve h e (b:bs) | b*b > h = e ++ bs
+sieve h e (b:bs) = let
   r = removeMults b bs in
-  sieve (e ++ [b]) r
+  sieve h (e ++ [b]) r
 
 sieveUntil :: (Integral a) => a -> [a]
-sieveUntil a = sieve [] [2..a]
+sieveUntil a = sieve a [] [2..a]
 
 -- The prime factors of 13195 are 5, 7, 13 and 29.
 primeFactors :: (Integral a) => a -> [a]
