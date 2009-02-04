@@ -1,3 +1,6 @@
+-- naive
+-- ./3 600851475  2.48s user 0.04s system 96% cpu 2.605 total
+
 module Main
 where
 
