@@ -10,19 +10,40 @@
 module Main
 where
 
+import Data.List
+
+divides :: (Integral a) => a -> a -> Bool
+a `divides` b = a `rem` b == 0
+
 isPrime :: (Integral a) => a -> Bool
+isPrime 0 = False
 isPrime 1 = True
 isPrime 2 = True
 isPrime x = let
   up = ceiling . sqrt $ fromIntegral x
   in
-  all (\f -> x `rem` f /= 0) [2..up]
+  all (not . divides x) [2..up]
 
-primesBelow x = filter isPrime [x,x-1..1]
+primesBelow :: (Integral a) => a -> [a]
+primesBelow x = filter isPrime [2..x]
 
-findRun prime l = let
-  len = length l
+sumIsPrime :: (Integral a) => [a] -> Bool
+sumIsPrime = isPrime . sum
+
+sumIsPrimeAndBelow :: (Integral a) => a -> [a] -> Bool
+sumIsPrimeAndBelow n a = let s = sum(a) in
+  s < n && isPrime s
+
+sortByLength :: (Integral a) => [a] -> [a] -> Ordering
+sortByLength a b | length a > length b = GT
+sortByLength a b | length a == length b = EQ
+sortByLength a b | length a < length b = LT
+
+findLongestRun :: (Integral a) => [a] -> a -> [a]
+findLongestRun ps n = let
+    lss = map inits (tails ps)
+    f = filter (sumIsPrimeAndBelow n) (concat lss)
   in
-  map (\n -> sum $ take n l) [1..len]
+  last $ sortBy sortByLength f
 
---main = putStrLn "50"
+main = putStrLn $ show $ sum $ findLongestRun (primesBelow(10000)) 1000000
