@@ -7,29 +7,35 @@
 module Main
 where
 
-isInt :: (RealFloat a) => a -> Bool
-isInt c = let
-  l = c
-  r = fromIntegral $ truncate c
-  in
-  l == r
-
-calcC :: (Integral a, Floating b) => a -> a -> b
-calcC a b = let
-  af = fromIntegral a
-  bf = fromIntegral b
-  in
-  sqrt $ 1 + af*af + bf*bf
-
+--lim :: Integer
 lim = 75000000::Integer
 
+eq :: (Integral a) => a -> a -> a -> Bool
+eq a b c = let
+  l = a*a + b*b
+  r = c*c - 1
+  in l == r
+
+perim :: (Integral a) => a -> a -> a -> Bool
+perim a b c = let
+  s = (a + b + c)
+  in
+  s <= 75000000
+
+iterateC a b = let
+  maxab = maximum [a,b]
+  h = lim - a - b
+  cs = [maxab..h]
+  css = takeWhile (perim a b) cs
+  in
+  filter (eq a b) css
+
 --iterateB :: (Integral a) => a -> [a]
-iterateB a = let
-  high :: Integer
+iterateBC a = let
   high = lim - a
   bs = [a..high]
-  cs = map ((calcC a) . fromIntegral) bs
+  cs = map (iterateC a) bs
   in 
-  filter isInt cs -- map isInt cs
+  cs -- takeWhile perim 
 
-main = putStrLn "224"
+main = putStrLn $ show $ iterateBC 1
