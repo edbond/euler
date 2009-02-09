@@ -10,7 +10,8 @@ where
 import qualified Data.Set as Set
 
 lim :: Integer
-lim = 75000000
+-- lim = 75000000
+lim = 7500
 
 squares :: [Integer]
 squares = takeWhile (<=lim) [a*a | a <- [1..]]
@@ -21,11 +22,13 @@ isSquare a = let
   in
   Set.member a s
 
-perim :: (Integral a) => a -> a -> a -> Bool
+--perim :: (Num a, Ord a) => a -> a -> a -> Bool
+perim :: Integer -> Integer -> Integer -> Bool
 perim a b c = let
+  s :: Integer
   s = (a + b + c)
   in
-  s <= 75000000
+  s <= lim
 
 csqr a b = 1+a*a+b*b
 
