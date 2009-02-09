@@ -11,16 +11,14 @@ import qualified Data.Set as Set
 
 lim :: Integer
 -- lim = 75000000
-lim = 7500
+lim = 75000
 
-squares :: [Integer]
-squares = takeWhile (<=lim) [a*a | a <- [1..]]
+squares = Set.fromList [a*a | a <- [1..lim]]
+--squares = [a*a | a <- [1..lim]]
 
 isSquare :: Integer -> Bool
-isSquare a = let
-  s = Set.fromList squares
-  in
-  Set.member a s
+isSquare a = Set.member a squares
+--isSquare a = elem a squares
 
 --perim :: (Num a, Ord a) => a -> a -> a -> Bool
 perim :: Integer -> Integer -> Integer -> Bool
@@ -33,7 +31,6 @@ perim a b c = let
 csqr a b = 1+a*a+b*b
 
 -- there is only one solution for a b
--- walk from max(a,b) to lim and check for square
 -- iterateC :: (Integral a) => a -> a -> [a]
 iterateC a b = let
   h = maximum [a,b]
@@ -41,18 +38,18 @@ iterateC a b = let
   p = perim a b c
   in
   case isSquare(c) && p of
-    True -> [truncate $ sqrt $ fromIntegral c]
+    True -> [c] -- [(b, truncate $ sqrt $ fromIntegral c)]
     _ -> []
 
 iterateBC a = let
   high = lim - a
   bs = [a..high]
   all = map (iterateC a) bs
-  cs = filter (not . null) all
+  cs = dropWhile null all
   in
   case null cs of
-    True -> []
-    False -> head cs
+    True -> 0
+    False -> 1 -- [(a,head cs)]
 
 main = do
-  putStrLn $ show $ concat $ map iterateBC [1..lim]
+  putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lim]
