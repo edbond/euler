@@ -7,14 +7,19 @@
 module Main
 where
 
---lim :: Integer
-lim = 75000000::Integer
+import qualified Data.Set as Set
 
-eq :: (Integral a) => a -> a -> a -> Bool
-eq a b c = let
-  l = a*a + b*b
-  r = c*c - 1
-  in l == r
+lim :: Integer
+lim = 75000000
+
+squares :: [Integer]
+squares = takeWhile (<=lim) [a*a | a <- [1..]]
+
+isSquare :: Integer -> Bool
+isSquare a = let
+  s = Set.fromList squares
+  in
+  Set.member a s
 
 perim :: (Integral a) => a -> a -> a -> Bool
 perim a b c = let
@@ -22,20 +27,29 @@ perim a b c = let
   in
   s <= 75000000
 
-iterateC a b = let
-  maxab = maximum [a,b]
-  h = lim - a - b
-  cs = [maxab..h]
-  css = takeWhile (perim a b) cs
-  in
-  filter (eq a b) css
+csqr a b = 1+a*a+b*b
 
---iterateB :: (Integral a) => a -> [a]
+-- there is only one solution for a b
+-- walk from max(a,b) to lim and check for square
+-- iterateC :: (Integral a) => a -> a -> [a]
+iterateC a b = let
+  h = maximum [a,b]
+  c = csqr a b
+  p = perim a b c
+  in
+  case isSquare(c) && p of
+    True -> [truncate $ sqrt $ fromIntegral c]
+    _ -> []
+
 iterateBC a = let
   high = lim - a
   bs = [a..high]
-  cs = map (iterateC a) bs
-  in 
-  cs -- takeWhile perim 
+  all = map (iterateC a) bs
+  cs = filter (not . null) all
+  in
+  case null cs of
+    True -> []
+    False -> head cs
 
-main = putStrLn $ show $ iterateBC 1
+main = do
+  putStrLn $ show $ concat $ map iterateBC [1..lim]
