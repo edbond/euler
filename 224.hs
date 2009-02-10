@@ -11,7 +11,7 @@ import qualified Data.Set as Set
 
 lim :: Integer
 -- lim = 75000000
-lim = 7500
+lim = 75000000
 
 squares = Set.fromList [a*a | a <- [1..lim]]
 --squares = [a*a | a <- [1..lim]]
@@ -39,19 +39,16 @@ iterateC a b = let
   cs = (truncate . sqrt . fromIntegral) c
   p = perim a b cs
   in
-  case isSquare(c) && p of
-    True -> [c] -- [(b, truncate $ sqrt $ fromIntegral c)]
-    _ -> []
+  c==cs*cs && p
 
 iterateBC a = let
   high = lim - a
   bs = [a..high]
-  all = map (iterateC a) bs
-  cs = dropWhile null all
+  solution = any (iterateC a) bs
   in
-  case null cs of
-    True -> 0
-    False -> 1 -- [(a,head cs)]
+  case solution of
+    True -> 1
+    False -> 0 -- [(a,head cs)]
 
 main = do
   putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lim]
