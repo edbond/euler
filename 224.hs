@@ -11,7 +11,7 @@ import qualified Data.Set as Set
 
 lim :: Integer
 -- lim = 75000000
-lim = 75000
+lim = 7500
 
 squares = Set.fromList [a*a | a <- [1..lim]]
 --squares = [a*a | a <- [1..lim]]
@@ -28,14 +28,16 @@ perim a b c = let
   in
   s <= lim
 
+csqr :: Integer -> Integer -> Integer
 csqr a b = 1+a*a+b*b
 
 -- there is only one solution for a b
 -- iterateC :: (Integral a) => a -> a -> [a]
 iterateC a b = let
-  h = maximum [a,b]
+  --h = maximum [a,b]
   c = csqr a b
-  p = perim a b c
+  cs = (truncate . sqrt . fromIntegral) c
+  p = perim a b cs
   in
   case isSquare(c) && p of
     True -> [c] -- [(b, truncate $ sqrt $ fromIntegral c)]
