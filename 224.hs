@@ -8,10 +8,11 @@ module Main
 where
 
 import qualified Data.Set as Set
+import Bits (shiftL, shiftR)
 
 lim :: Integer
 -- lim = 75000000
-lim = 75000000
+lim = 7500
 
 squares = Set.fromList [a*a | a <- [1..lim]]
 --squares = [a*a | a <- [1..lim]]
@@ -31,12 +32,31 @@ perim a b c = let
 csqr :: Integer -> Integer -> Integer
 csqr a b = 1+a*a+b*b
 
+--sqrec :: Float -> Float -> Float
+--sqrec r x = if abs (r * r - x) < 0.01 then r else sqrec i x
+    --where i = (x / r + r) / 2
+
+--fsqrt :: Float -> Float
+--fsqrt x = sqrec 1.0 x
+
+intsqr = floor . sqrt . fromIntegral
+
+intSqrt :: Integer -> Integer
+intSqrt 0 = 0
+intSqrt n = newtonianIteration n (findx0 n 1)
+	where
+		-- find x0 == 2^(a+1), such that 4^a <= n < 4^(a+1).
+		findx0 a b = if a == 0 then b else findx0 (a `shiftR` 2) (b `shiftL` 1)
+		newtonianIteration n x =
+			let x' = (x + n `div` x) `div` 2
+			in if x' < x then newtonianIteration n x' else x
+
 -- there is only one solution for a b
 -- iterateC :: (Integral a) => a -> a -> [a]
 iterateC a b = let
   --h = maximum [a,b]
   c = csqr a b
-  cs = (truncate . sqrt . fromIntegral) c
+  cs = intsqr c -- intSqrt c
   p = perim a b cs
   in
   c==cs*cs && p
