@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -O -fglasgow-exts -ddump-simpl-stats -optc-O3 -optc-ffast-math -fexcess-precision #-}
 -- http://projecteuler.net/index.php?section=problems&id=224
 --
 -- Let us call an integer sided triangle with sides a ≤ b ≤ c barely obtuse if the sides satisfy
@@ -7,64 +8,62 @@
 module Main
 where
 
-import qualified Data.Set as Set
-import Bits (shiftL, shiftR)
+import qualified Debug.Trace
+import Data.List
 
 lim :: Integer
 -- lim = 75000000
 lim = 7500
 
-squares = Set.fromList [a*a | a <- [1..lim]]
---squares = [a*a | a <- [1..lim]]
+{-# INLINE eq #-}
+eq a b c = let
+  l=a*a+b*b
+  r=c*c-1
+  in
+  --Debug.Trace.traceShow (a,b,c, l==r) (l==r)
+  l==r
 
-isSquare :: Integer -> Bool
-isSquare a = Set.member a squares
---isSquare a = elem a squares
+calcC :: Integer -> Integer -> Float
+calcC a b = let 
+    aa = fromIntegral (a*a)
+    bb = fromIntegral (b*b)
+  in
+  sqrt(1.0+aa+bb)
 
---perim :: (Num a, Ord a) => a -> a -> a -> Bool
+{-# INLINE isInt #-}
+isInt :: Float -> Bool
+isInt x = let
+  r=(x == (fromIntegral . floor) x)
+  in
+  --Debug.Trace.traceShow (x,r) r
+  r
+
+{-# INLINE perim #-}
 perim :: Integer -> Integer -> Integer -> Bool
 perim a b c = let
-  s :: Integer
-  s = (a + b + c)
+  p=(a+b+c)
+  pp = p <= lim
   in
-  s <= lim
-
-csqr :: Integer -> Integer -> Integer
-csqr a b = 1+a*a+b*b
-
---sqrec :: Float -> Float -> Float
---sqrec r x = if abs (r * r - x) < 0.01 then r else sqrec i x
-    --where i = (x / r + r) / 2
-
---fsqrt :: Float -> Float
---fsqrt x = sqrec 1.0 x
-
-intsqr = floor . sqrt . fromIntegral
-
-intSqrt :: Integer -> Integer
-intSqrt 0 = 0
-intSqrt n = newtonianIteration n (findx0 n 1)
-	where
-		-- find x0 == 2^(a+1), such that 4^a <= n < 4^(a+1).
-		findx0 a b = if a == 0 then b else findx0 (a `shiftR` 2) (b `shiftL` 1)
-		newtonianIteration n x =
-			let x' = (x + n `div` x) `div` 2
-			in if x' < x then newtonianIteration n x' else x
+  --Debug.Trace.traceShow (p,pp) pp
+  pp
 
 -- there is only one solution for a b
 -- iterateC :: (Integral a) => a -> a -> [a]
 iterateC a b = let
-  --h = maximum [a,b]
-  c = csqr a b
-  cs = intsqr c -- intSqrt c
-  p = perim a b cs
+    --h = minimum [a+b-1, lim]
+    --cs = [b..h]
+    c = calcC a b
+    ci = fromIntegral $ floor c
+    p = perim a b ci
+    i = isInt(c)
   in
-  c==cs*cs && p
+  i && p
+  --any (eq a b) cs
 
 iterateBC a = let
-  high = lim - a
-  bs = [a..high]
-  solution = any (iterateC a) bs
+    high = lim - a + 1
+    bs = [a..high]
+    solution = any (iterateC a) bs
   in
   case solution of
     True -> 1
