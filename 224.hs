@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -O -fglasgow-exts -ddump-simpl-stats -optc-O3 -optc-ffast-math -fexcess-precision #-}
+{-# OPTIONS_GHC -O -fglasgow-exts -optc-O3 -optc-ffast-math -fvia-C #-}
 -- http://projecteuler.net/index.php?section=problems&id=224
 --
 -- Let us call an integer sided triangle with sides a ≤ b ≤ c barely obtuse if the sides satisfy
@@ -11,11 +11,11 @@ where
 import qualified Debug.Trace
 import Data.List
 
-lim :: Integer
+lim :: Int
 -- lim = 75000000
-lim = 7500
+lim = 75
 
-{-# INLINE eq #-}
+eq :: (Num a) => a -> a -> a -> Bool
 eq a b c = let
   l=a*a+b*b
   r=c*c-1
@@ -23,23 +23,23 @@ eq a b c = let
   --Debug.Trace.traceShow (a,b,c, l==r) (l==r)
   l==r
 
-calcC :: Integer -> Integer -> Float
+calcC :: Int -> Int -> Float
 calcC a b = let 
     aa = fromIntegral (a*a)
     bb = fromIntegral (b*b)
+    cs = 1+aa+bb
+    c = sqrt(cs)
   in
-  sqrt(1.0+aa+bb)
+  Debug.Trace.traceShow (a,b,cs) c
+  --c
 
 {-# INLINE isInt #-}
 isInt :: Float -> Bool
 isInt x = let
-  r=(x == (fromIntegral . floor) x)
-  in
-  --Debug.Trace.traceShow (x,r) r
-  r
+  d = snd $ properFraction x -- x == (fromIntegral . round) x
+  in d == 0
 
-{-# INLINE perim #-}
-perim :: Integer -> Integer -> Integer -> Bool
+perim :: Int -> Int -> Int -> Bool
 perim a b c = let
   p=(a+b+c)
   pp = p <= lim
@@ -48,7 +48,7 @@ perim a b c = let
   pp
 
 -- there is only one solution for a b
--- iterateC :: (Integral a) => a -> a -> [a]
+iterateC :: Int -> Int -> Bool
 iterateC a b = let
     --h = minimum [a+b-1, lim]
     --cs = [b..h]
@@ -57,11 +57,12 @@ iterateC a b = let
     p = perim a b ci
     i = isInt(c)
   in
-  i && p
+  p && i
   --any (eq a b) cs
 
+iterateBC :: forall t. (Num t) => Int -> t
 iterateBC a = let
-    high = lim - a + 1
+    high = lim-a+1
     bs = [a..high]
     solution = any (iterateC a) bs
   in
@@ -69,5 +70,6 @@ iterateBC a = let
     True -> 1
     False -> 0 -- [(a,head cs)]
 
+main :: IO ()
 main = do
   putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lim]
