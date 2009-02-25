@@ -10,10 +10,11 @@ where
 
 import qualified Debug.Trace
 import Data.List
+import FastSQRT
 
 lim :: Int
 -- lim = 75000000
-lim = 75
+lim = 7500
 
 eq :: (Num a) => a -> a -> a -> Bool
 eq a b c = let
@@ -23,15 +24,15 @@ eq a b c = let
   --Debug.Trace.traceShow (a,b,c, l==r) (l==r)
   l==r
 
-calcC :: Int -> Int -> Float
+calcC :: Int -> Int -> (Int, Int)
 calcC a b = let 
-    aa = fromIntegral (a*a)
-    bb = fromIntegral (b*b)
+    aa = a*a
+    bb = b*b
     cs = 1+aa+bb
-    c = sqrt(cs)
+    c = fsqrt cs
   in
-  Debug.Trace.traceShow (a,b,cs) c
-  --c
+  --Debug.Trace.traceShow (a,b,cs) c
+  c
 
 {-# INLINE isInt #-}
 isInt :: Float -> Bool
@@ -53,9 +54,9 @@ iterateC a b = let
     --h = minimum [a+b-1, lim]
     --cs = [b..h]
     c = calcC a b
-    ci = fromIntegral $ floor c
+    ci = snd c
     p = perim a b ci
-    i = isInt(c)
+    i = fst c == 0
   in
   p && i
   --any (eq a b) cs
