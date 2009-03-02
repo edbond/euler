@@ -4,6 +4,7 @@ where
 import Text.Printf
 import Debug.Trace
 import Numeric
+--import qualified Data.Map as M
 
 int2sp o = let
   s :: String
@@ -21,10 +22,10 @@ topairs x = map (take 2) . takeWhile (not . null) . iterate (drop 2) $ x
 solve r [] p = (r,p)
 solve rem pairs p = let
   c :: Int
-  c = rem*100 + (fst $ head $ readDec $ head pairs)
+  c = rem*100 + (head pairs)
   x = last $ takeWhile (\z -> (20*p+z)*z <= c) [0..]
   y = (20*p+x)*x
-  l = length pairs
+  --l = length pairs
   newp = p*10+x
   newrem = c-y
   in
@@ -33,6 +34,6 @@ solve rem pairs p = let
 
 fsqrt :: Int -> (Int,Int)
 fsqrt i = let
-  pairs = topairs $ int2sp i
+  pairs = map (fst . head . readDec) (topairs $ int2sp i)
   in
   solve 0 pairs 0

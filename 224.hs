@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -O -fglasgow-exts -optc-O3 -optc-ffast-math -fvia-C #-}
 -- http://projecteuler.net/index.php?section=problems&id=224
 --
 -- Let us call an integer sided triangle with sides a ≤ b ≤ c barely obtuse if the sides satisfy
@@ -8,8 +7,8 @@
 module Main
 where
 
-import qualified Debug.Trace
-import Data.List
+--import qualified Debug.Trace
+--import Data.List
 import FastSQRT
 
 lim :: Int
@@ -34,7 +33,6 @@ calcC a b = let
   --Debug.Trace.traceShow (a,b,cs) c
   c
 
-{-# INLINE isInt #-}
 isInt :: Float -> Bool
 isInt x = let
   d = snd $ properFraction x -- x == (fromIntegral . round) x
@@ -61,7 +59,7 @@ iterateC a b = let
   p && i
   --any (eq a b) cs
 
-iterateBC :: forall t. (Num t) => Int -> t
+--iterateBC :: forall t. (Num t) => Int -> t
 iterateBC a = let
     high = lim-a+1
     bs = [a..high]
@@ -73,4 +71,5 @@ iterateBC a = let
 
 main :: IO ()
 main = do
-  putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lim]
+  --putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lim]
+  putStrLn $ show $ sum $ map iterateBC [1..lim]
