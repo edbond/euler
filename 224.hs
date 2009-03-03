@@ -8,62 +8,29 @@ module Main
 where
 
 --import qualified Debug.Trace
---import Data.List
-import FastSQRT
 
 lim :: Int
 -- lim = 75000000
 lim = 7500
 
-eq :: (Num a) => a -> a -> a -> Bool
-eq a b c = let
-  l=a*a+b*b
-  r=c*c-1
-  in
-  --Debug.Trace.traceShow (a,b,c, l==r) (l==r)
-  l==r
-
-calcC :: Int -> Int -> (Int, Int)
+calcC :: Int -> Int -> Float
 calcC a b = let 
     aa = a*a
     bb = b*b
     cs = 1+aa+bb
-    c = fsqrt cs
+    c = sqrt cs
   in
+  c::Float
   --Debug.Trace.traceShow (a,b,cs) c
-  c
 
 isInt :: Float -> Bool
-isInt x = let
-  d = snd $ properFraction x -- x == (fromIntegral . round) x
-  in d == 0
+isInt x = (fromIntegral x) == (truncate x)
 
-perim :: Int -> Int -> Int -> Bool
-perim a b c = let
-  p=(a+b+c)
-  pp = p <= lim
-  in
-  --Debug.Trace.traceShow (p,pp) pp
-  pp
-
--- there is only one solution for a b
-iterateC :: Int -> Int -> Bool
-iterateC a b = let
-    --h = minimum [a+b-1, lim]
-    --cs = [b..h]
-    c = calcC a b
-    ci = snd c
-    p = perim a b ci
-    i = fst c == 0
-  in
-  p && i
-  --any (eq a b) cs
-
---iterateBC :: forall t. (Num t) => Int -> t
+iterateBC :: Int -> Int
 iterateBC a = let
     high = lim-a+1
     bs = [a..high]
-    solution = any (iterateC a) bs
+    solution = any (\b -> isInt $ calcC a b) bs
   in
   case solution of
     True -> 1
