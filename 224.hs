@@ -17,20 +17,29 @@ calcC :: Int -> Int -> Float
 calcC a b = let 
     aa = a*a
     bb = b*b
-    cs = 1+aa+bb
+    cs :: Float
+    cs = (fromIntegral $ 1+aa+bb)::Float
     c = sqrt cs
   in
-  c::Float
+  c
   --Debug.Trace.traceShow (a,b,cs) c
 
 isInt :: Float -> Bool
-isInt x = (fromIntegral x) == (truncate x)
+isInt x = x == fromIntegral (truncate x)
+
+iterateC :: Int -> Int -> Bool
+iterateC a b = let
+  c = calcC a b
+  ct = truncate c
+  in
+  ct >= b && isInt c && (a+b+ct <= lim)
+  
 
 iterateBC :: Int -> Int
 iterateBC a = let
     high = lim-a+1
     bs = [a..high]
-    solution = any (\b -> isInt $ calcC a b) bs
+    solution = any (iterateC a) bs
   in
   case solution of
     True -> 1
