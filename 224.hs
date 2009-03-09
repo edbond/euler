@@ -7,11 +7,12 @@
 module Main
 where
 
---import qualified Debug.Trace
+import qualified Debug.Trace
 
 lim :: Int
 -- lim = 75000000
 lim = 7500
+lh = lim `div` 3
 
 calcC :: Int -> Int -> Float
 calcC a b = let 
@@ -31,9 +32,12 @@ iterateC :: Int -> Int -> Bool
 iterateC a b = let
   c = calcC a b
   ct = truncate c
+  r = ct >= b && isInt c && (a+b+ct <= lim)
   in
-  ct >= b && isInt c && (a+b+ct <= lim)
-  
+  r
+  --case r of
+    --True -> Debug.Trace.traceShow (a,b,ct) True
+    --False -> False
 
 iterateBC :: Int -> Int
 iterateBC a = let
@@ -47,5 +51,5 @@ iterateBC a = let
 
 main :: IO ()
 main = do
-  --putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lim]
-  putStrLn $ show $ sum $ map iterateBC [1..lim]
+  --putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lh]
+  putStrLn $ show $ sum $ map iterateBC [1..lh]
