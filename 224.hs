@@ -4,12 +4,14 @@
 -- a^(2) + b^(2) = c^(2) - 1.
 -- How many barely obtuse triangles are there with perimeter ≤ 75,000,000?
 
+-- -O2 -fvia-C -optc-O2
+
 module Main
 where
 
 import qualified Debug.Trace
 --import Data.IntSet
-import Data.CompactMap
+import Data.Map
 import Control.Parallel
 import Control.Parallel.Strategies
 
@@ -19,7 +21,7 @@ lim = 75000000
 lh = lim `div` 3
 c = 100
 
-m = Data.CompactMap.fromDistinctAscList [(x*x,x) | x <- [1..h]]
+m = Data.Map.fromDistinctAscList [(x*x,x) | x <- [1..h]]
   where
   h :: Int
   h = lim `div` 2
@@ -28,7 +30,7 @@ calcC :: Int -> Int -> Maybe Int
 calcC a b = let 
     cc = 1+a*a+b*b
   in
-  Data.CompactMap.lookup cc m
+  Data.Map.lookup cc m
 
 iterateC :: Int -> Int -> Bool
 iterateC a b = let
