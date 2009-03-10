@@ -8,45 +8,39 @@ module Main
 where
 
 import qualified Debug.Trace
+--import Data.IntSet
+import Data.CompactMap
 import Control.Parallel
 import Control.Parallel.Strategies
 
 lim :: Int
 -- lim = 75000000
-lim = 7500
+lim = 75000000
 lh = lim `div` 3
 c = 100
 
-calcC :: Int -> Int -> Float
-calcC a b = let 
-    aa = a*a
-    bb = b*b
-    cs :: Float
-    cs = (fromIntegral $ 1+aa+bb)::Float
-    c = sqrt cs
-  in
-  c
-  --Debug.Trace.traceShow (a,b,cs) c
+m = Data.CompactMap.fromDistinctAscList [(x*x,x) | x <- [1..h]]
+  where
+  h :: Int
+  h = lim `div` 2
 
-isInt :: Float -> Bool
-isInt x = x == fromIntegral (truncate x)
+calcC :: Int -> Int -> Maybe Int
+calcC a b = let 
+    cc = 1+a*a+b*b
+  in
+  Data.CompactMap.lookup cc m
 
 iterateC :: Int -> Int -> Bool
 iterateC a b = let
   c = calcC a b
-  ct = truncate c
-  i = isInt c
-  --r = i `par` c `pseq` ct `pseq` ct >= b && i && (a+b+ct <= lim)
-  r = ct >= b && i && (a+b+ct <= lim)
   in
-  r
-  --case r of
-    --True -> Debug.Trace.traceShow (a,b,ct) True
-    --False -> False
+  case c of
+    Just cs -> cs >= b && (a+b+cs <= lim)
+    Nothing -> False
 
 iterateBC :: Int -> Int
 iterateBC a = let
-    high = lim-a+1
+    high = (lim-a) `div` 2
     bs = [a..high]
     solution = any (iterateC a) bs
   in
