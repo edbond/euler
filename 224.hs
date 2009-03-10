@@ -8,11 +8,14 @@ module Main
 where
 
 import qualified Debug.Trace
+import Control.Parallel
+import Control.Parallel.Strategies
 
 lim :: Int
 -- lim = 75000000
 lim = 7500
 lh = lim `div` 3
+c = 100
 
 calcC :: Int -> Int -> Float
 calcC a b = let 
@@ -32,7 +35,9 @@ iterateC :: Int -> Int -> Bool
 iterateC a b = let
   c = calcC a b
   ct = truncate c
-  r = ct >= b && isInt c && (a+b+ct <= lim)
+  i = isInt c
+  --r = i `par` c `pseq` ct `pseq` ct >= b && i && (a+b+ct <= lim)
+  r = ct >= b && i && (a+b+ct <= lim)
   in
   r
   --case r of
@@ -52,4 +57,5 @@ iterateBC a = let
 main :: IO ()
 main = do
   --putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [1..lh]
-  putStrLn $ show $ sum $ map iterateBC [1..lh]
+  putStrLn $ show $ sum( parMap rnf iterateBC [1..lh] )
+  --putStrLn $ show $ sum( map iterateBC [1..lh] `using` parListChunk c rnf )
