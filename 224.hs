@@ -19,7 +19,7 @@ import Control.Parallel.Strategies
 
 lim :: Int
 -- lim = 75000000
-lim = 75000000
+lim = 7500
 
 lh :: Int
 lh = (lim `div` 3)
@@ -35,6 +35,9 @@ eq a c b = let
   --case s of
     --True -> traceShow ("a", a, "b", b, "c",c, "perim",a+b+c) True
     --False -> False
+
+nextsqr :: Int -> Int
+nextsqr n = 2*(n-1)^2 - (n-2)^2 + 2
 
 iSqrt :: Int -> Int
 iSqrt = truncate . fSqrt
@@ -69,7 +72,9 @@ isSqr n = let
 iterateB :: Int -> Int -> Bool
 iterateB a c = let
   b2 = (c*c)-(a*a)-1
-  s = (b2 <= (c*c)) && ((a*a) <= b2) && isSqr b2
+  --bf = head $ dropWhile (\b -> (nextsqr b) < b2) [a..]
+
+  s = (b2 <= (c*c)) && ((a*a) <= b2) && isSqr b2 -- (bf*bf == b2) 
 
   b :: Int
   b = iSqrt b2
@@ -95,5 +100,5 @@ iterateBC a = let
 main :: IO ()
 main = do
   --putStrLn $ show $ foldr (\n acc -> acc+iterateBC(n)) 0 [2,4..lh]
-  --putStrLn $ show $ sum( parMap rnf iterateBC [2,4..lh] )
-  putStrLn $ show $ sum( map iterateBC [2,4..lh] `using` parListChunk chunk rnf )
+  putStrLn $ show $ sum( parMap rnf iterateBC [2,4..lh] )
+  --putStrLn $ show $ sum( map iterateBC [2,4..lh] `using` parListChunk chunk rnf )
