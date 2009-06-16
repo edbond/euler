@@ -12,8 +12,9 @@ where
 
 import Debug.Trace
 import Control.Parallel.Strategies
+import FastSQRT
 
-lim = 75000000
+lim = 7500
 
 eq a b c = a*a+b*b == c*c-1
 {-# INLINE eq #-}

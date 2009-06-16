@@ -6,34 +6,39 @@ import Debug.Trace
 import Numeric
 --import qualified Data.Map as M
 
-int2sp o = let
-  s :: String
-  s = printf "%i" o
-  l = length s
-  in
-  if odd l then
-    '0':s
-  else
-    s
+{- initialGuess :: Integer -> Integer -}
+initialGuess x = let
+	d = (length . show) x
+	in
+	if odd d then
+		2*10^((d-1) `div` 2)
+	else
+		6*10^((d-2) `div` 2)
 
-topairs x = map (take 2) . takeWhile (not . null) . iterate (drop 2) $ x
+{- nextStep :: (Fractional t) => t -> t -> t -}
+nextStep x x0 = let
+	fx0 = x0*x0 - x
+	f'x0 = 2*x0
+	s = (x0 - fx0/f'x0)
+	in
+	(s, abs(s-x0))
 
--- returns remainder and sqrt
-solve r [] p = (r,p)
-solve rem pairs p = let
-  c :: Int
-  c = rem*100 + (head pairs)
-  x = last $ takeWhile (\z -> (20*p+z)*z <= c) [0..]
-  y = (20*p+x)*x
-  --l = length pairs
-  newp = p*10+x
-  newrem = c-y
-  in
-  solve newrem (tail pairs) newp
-  --traceShow (x, y, p, newp, c, newrem) solve newrem (tail pairs) newp
+fsqrtWhile x x0 err = let
+	(next, err') = nextStep x x0
+	in
+	if err' < err then
+		next
+	else
+		fsqrtWhile x next err
 
-fsqrt :: Int -> (Int,Int)
-fsqrt i = let
-  pairs = map (fst . head . readDec) (topairs $ int2sp i)
-  in
-  solve 0 pairs 0
+{- fsqrt :: (Fractional t) => t -> t -}
+fsqrt x = let
+	x0 = initialGuess x
+	in
+	fsqrtWhile x x0 0.01
+
+hasIntSqrt x = let
+	s = fsqrt x
+	err = abs $ (fromIntegral $ truncate(s)) - s
+	in
+	err < 0.01

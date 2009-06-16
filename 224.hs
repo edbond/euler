@@ -19,7 +19,7 @@ import Control.Parallel.Strategies
 
 lim :: Int
 -- lim = 75000000
-lim = 7500
+lim = 75000000
 
 lh :: Int
 lh = (lim `div` 3)
