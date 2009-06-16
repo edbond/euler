@@ -32,11 +32,11 @@ fsqrtWhile x x0 err = let
 fsqrt x = let
 	x0 = initialGuess x
 	in
-	fsqrtWhile x x0 0.01
+	fsqrtWhile x x0 0.1
 
 {- hasIntSqrt :: (Fractional a) => a -> Bool -}
 hasIntSqrt x = let
 	s = fsqrt x
 	err = abs ( (fromIntegral $ truncate(s)) - s )
 	in
-	err < 0.01
+	err < 0.1

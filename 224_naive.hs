@@ -13,21 +13,29 @@ where
 import Debug.Trace
 import FastSQRT
 
+lim :: Integer
 lim = 7500
 
-{- iterAB :: (Integral a) => a -> a -> Bool -}
+iterAB :: Integer -> Integer -> Bool
 iterAB a b = let
-	l = ((a*a) + (b*b) + 1) :: Integer
+	l = (a*a) + (b*b) + 1
+	s = FastSQRT.hasIntSqrt $ fromIntegral l
+	r = sqrt $ fromIntegral l
+	rt = truncate r
+	p = a+b+rt
 	in
-	FastSQRT.hasIntSqrt $ fromIntegral l
+	case s of
+		False -> False
+		True -> (p < lim) && (fromIntegral rt) == r
+		{- True -> traceShow (a,b,r,p) (p < lim) && (fromIntegral rt) == r -}
 
 iterA a = let
-  l = a :: Integer
-  h = ((lim-a) `div` 2) :: Integer
+  l = fromIntegral a
+  h = ((lim-a) `div` 2)
   b = any (iterAB a) [l..h]
   in
   case b of
     True -> 1
     False -> 0
 
-main = putStrLn $ show $ sum $ map iterA [(1::Integer)..lim]
+main = putStrLn $ show $ sum $ map iterA [1..lim]
