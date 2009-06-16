@@ -11,33 +11,23 @@ module Main
 where
 
 import Debug.Trace
-import Control.Parallel.Strategies
 import FastSQRT
 
 lim = 7500
 
-eq a b c = a*a+b*b == c*c-1
-{-# INLINE eq #-}
-
+{- iterAB :: (Integral a) => a -> a -> Bool -}
 iterAB a b = let
-  l = max a b
-  ch = truncate $ sqrt $ fromIntegral (a*a+b*b+1)
-  h = minimum [a+b, lim-a-b, ch]
-
-  cc :: Bool
-  cc = any (eq a b) [l..h]
-  --cc = elem True (parMap rnf (eq a b) [l..h])
-  in
-  cc
-  --traceShow ("a",a, "b",b, "l",l, "h",h, "cc",cc) cc
+	l = ((a*a) + (b*b) + 1) :: Integer
+	in
+	FastSQRT.hasIntSqrt $ fromIntegral l
 
 iterA a = let
-  l = a
-  h = (lim-a) `div` 2
+  l = a :: Integer
+  h = ((lim-a) `div` 2) :: Integer
   b = any (iterAB a) [l..h]
   in
   case b of
     True -> 1
     False -> 0
 
-main = putStrLn $ show $ sum $ map iterA [1..lim]
+main = putStrLn $ show $ sum $ map iterA [(1::Integer)..lim]

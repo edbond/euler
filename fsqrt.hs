@@ -1,9 +1,6 @@
 module FastSQRT
 where
 
-import Text.Printf
-import Debug.Trace
-import Numeric
 --import qualified Data.Map as M
 
 {- initialGuess :: Integer -> Integer -}
@@ -31,14 +28,15 @@ fsqrtWhile x x0 err = let
 	else
 		fsqrtWhile x next err
 
-{- fsqrt :: (Fractional t) => t -> t -}
+{- fsqrt :: (Integral t) => t -> t -}
 fsqrt x = let
 	x0 = initialGuess x
 	in
 	fsqrtWhile x x0 0.01
 
+{- hasIntSqrt :: (Fractional a) => a -> Bool -}
 hasIntSqrt x = let
 	s = fsqrt x
-	err = abs $ (fromIntegral $ truncate(s)) - s
+	err = abs ( (fromIntegral $ truncate(s)) - s )
 	in
 	err < 0.01
