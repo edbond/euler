@@ -4,7 +4,6 @@
 -- a^(2) + b^(2) = c^(2) - 1.
 -- How many barely obtuse triangles are there with perimeter ≤ 75,000,000?
 
-
 {-# OPTIONS -funbox-strict-fields #-}
 
 module Main
@@ -14,7 +13,7 @@ import Debug.Trace
 import FastSQRT
 
 lim :: Integer
-lim = 7500
+lim = 75000000
 
 iterAB :: Integer -> Integer -> Bool
 iterAB a b = let
