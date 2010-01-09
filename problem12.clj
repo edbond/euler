@@ -21,15 +21,55 @@
 ;
 
 (ns problem12
-  (:require clojure.contrib.profile))
+  (:use clojure.set)
+  (:use clojure.test))
+
+  ;(:require clojure.contrib.profile))
+
+(set! *warn-on-reflection* true)
+
+(def divmap (ref (hash-map)))
+
+(defn divides [a b acc]
+  (if (zero? (rem a b))
+    (let [d (/ a b)]
+      (conj (union acc (get @divmap b #{}) (get @divmap d #{})) b))
+    acc))
 
 (defn dividers
   [x]
-  (filter #(= 0 (rem x %)) (range 1 (+ x 1))))
+  (loop
+    [acc #{} i 1]
+    (do
+      (if (> i (/ x 2))
+        (conj acc x)
+        (recur (divides x i acc) (inc i))))))
+
+(defn dividers-memo
+  [x]
+  (let
+    [result (dividers x)]
+    (dosync
+      (if-not (contains? divmap x)
+        (alter divmap assoc x result)))
+      result))
 
 (defn solve
   [n]
   (let
-    [numbers (iterate inc 1)
-     triangle-numbers (pmap #(apply + (range %)) numbers)]
-    (first (filter #(> (count (dividers %)) n) triangle-numbers))))
+    [numbers (iterate inc 2)
+     triangle-numbers (pmap #(apply + (range 1 %)) numbers)]
+    (first (filter #(> (count (dividers-memo %)) n) triangle-numbers))))
+
+(def triangles
+  (lazy-seq
+    (cons 0 (map + triangles (iterate inc 1)))))
+
+; test
+(dosync (alter divmap assoc 5 #{1 5}))
+(is (= #{1 5 2} (divides 10 2 #{})))
+
+(is (= 28 (solve 5)))
+
+; 50 25200
+;(println (time (solve 500)))
