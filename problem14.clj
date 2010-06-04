@@ -33,4 +33,4 @@
   (is (= (chain 1) '(1))))
 
 (test-problem14)
-(println (solve))
+(time (println (solve)))
