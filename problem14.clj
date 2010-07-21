@@ -12,18 +12,28 @@
 (ns problem14
   (:use clojure.test))
 
+(set! *warn-on-reflection* true)
+
+(defn next-n
+  [n]
+  (if (odd? n)
+    (inc (* 3 n))
+    (/ n 2)))
+
+(def memo-next-n (memoize next-n))
+
 (defn chain
   ([n] (chain n ()))
   ([n l]
      (if (= n 1)
-       (reverse (conj l n))
-       (if (odd? n)
-         (chain (+ 1 (* 3 n)) (conj l n))
-         (chain (/ n 2) (conj l n))))))
+       (reverse (cons n l))
+       (chain (next-n n) (cons n l)))))
+
+(def limit 1000000)
 
 (defn solve
   []
-  (let [coll (map (fn [x] {:count (count (chain x)) :n x}) (range 1 1000000))]
+  (let [coll (pmap (fn [x] {:count (count (chain x)) :n x}) (range limit 1 -1))]
     (reduce (fn [x y] (max-key :count x y)) coll)))
 
 ;; test
