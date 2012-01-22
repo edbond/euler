@@ -112,4 +112,4 @@
 (defn solve []
   (apply str (take 10 (str (apply + numbers)))))
 
-(println (solve))
+;; (println (solve))

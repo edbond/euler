@@ -37,10 +37,10 @@
     (reduce (fn [x y] (max-key :count x y)) coll)))
 
 ;; test
-(defn test-problem14
-  []
-  (is (= (chain 13) '(13 40 20 10 5 16 8 4 2 1)))
-  (is (= (chain 1) '(1))))
+;; (defn test-problem14
+;;   []
+;;   (is (= (chain 13) '(13 40 20 10 5 16 8 4 2 1)))
+;;   (is (= (chain 1) '(1))))
 
-(test-problem14)
-(time (println (solve)))
+;; (test-problem14)
+;; (time (println (solve)))

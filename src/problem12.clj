@@ -41,7 +41,7 @@
   (first (filter #(> (* 2 (count (dividers %))) n) triangles)))
 
 ; test
-(is (= 28 (solve 5)))
+;; (is (= 28 (solve 5)))
 
-; 50 25200
-(println (time (solve 500)))
+;; ; 50 25200
+;; (println (time (solve 500)))
